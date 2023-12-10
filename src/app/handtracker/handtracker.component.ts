@@ -10,14 +10,14 @@ import { PredictionEvent } from '../prediction-event';
 export class HandtrackerComponent implements OnInit {
   @Output() onPrediction = new EventEmitter<PredictionEvent>();
   @ViewChild('htvideo') video: ElementRef;
-  
+
   /* 
   SAMPLERATE determines the rate at which detection occurs (in milliseconds)
   500, or one half second is about right, but feel free to experiment with faster
   or slower rates
   */
   SAMPLERATE: number = 500; 
-  
+
   detectedGesture:string = "None"
   width:string = "400"
   height:string = "400"
@@ -35,7 +35,7 @@ export class HandtrackerComponent implements OnInit {
 
   constructor() {
   }
-  
+
   ngOnInit(): void{
     handTrack.load(this.modelParams).then((lmodel: any) =>{
         this.model = lmodel;
@@ -81,7 +81,7 @@ export class HandtrackerComponent implements OnInit {
     if (this.model != null){
         let predictions = this.model.detect(this.video.nativeElement).then((predictions: any) => {
             if (predictions.length <= 0) return;
-            
+
             let openhands = 0;
             let closedhands = 0;
             let pointing = 0;
@@ -89,25 +89,25 @@ export class HandtrackerComponent implements OnInit {
             for(let p of predictions){
                 //uncomment to view label and position data
                 console.log(p.label + " at X: " + p.bbox[0] + ", Y: " + p.bbox[1] + " at X: " + p.bbox[2] + ", Y: " + p.bbox[3]);
-                
+
                 if(p.label == 'open') openhands++;
                 if(p.label == 'closed') closedhands++;
                 if(p.label == 'point') pointing++;
                 if(p.label == 'pinch') pinching++;
-                
+
             }
 
             // These are just a few options! What about one hand open and one hand closed!?
 
             if (openhands > 1) this.detectedGesture = "Two Open Hands";
             else if(openhands == 1) this.detectedGesture = "Open Hand";
-            
+
             if (closedhands > 1) this.detectedGesture = "Two Closed Hands";
             else if(closedhands == 1) this.detectedGesture = "Closed Hand";
-            
+
             if (pointing > 1) this.detectedGesture = "Two Hands Pointing";
             else if(pointing == 1) this.detectedGesture = "Hand Pointing";
-            
+
             if (pinching > 1) this.detectedGesture = "Two Hands Pinching";
             else if(pinching == 1) this.detectedGesture = "Hand Pinching";
 
